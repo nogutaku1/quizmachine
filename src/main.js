@@ -3,7 +3,7 @@
 // ===================================
 
 import './style.css';
-import { generateQuiz } from './api.js';
+import { generateQuiz, resetAskedQuestions, getAskedQuestionsCount } from './api.js';
 import { saveScore, getRankings, getTopScore } from './supabase.js';
 
 // ===================================
@@ -111,6 +111,8 @@ function handleTimeout() {
 // ===================================
 
 async function startGame() {
+  // 新しいゲーム開始時に出題履歴をリセット
+  resetAskedQuestions();
   state.streak = 0;
   elements.streakCount.textContent = '0';
   showScreen('quiz');

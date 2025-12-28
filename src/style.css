@@ -1,0 +1,668 @@
+/* ===================================
+   エターナル一般常識クイズ - スタイルシート
+   =================================== */
+
+:root {
+  /* カラーパレット */
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --primary-light: #818cf8;
+  --secondary: #ec4899;
+  --accent: #22d3ee;
+  --success: #10b981;
+  --error: #ef4444;
+  --warning: #f59e0b;
+  
+  /* 背景グラデーション */
+  --bg-gradient: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --card-border: rgba(255, 255, 255, 0.1);
+  
+  /* テキスト */
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-muted: rgba(255, 255, 255, 0.5);
+  
+  /* シャドウ */
+  --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+  --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.3);
+  
+  /* トランジション */
+  --transition-fast: 150ms ease;
+  --transition-normal: 300ms ease;
+  --transition-slow: 500ms ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text-primary);
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* ===================================
+   画面共通スタイル
+   =================================== */
+
+.screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.95);
+  transition: all var(--transition-normal);
+}
+
+.screen.active {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+}
+
+.container {
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ===================================
+   ボタンスタイル
+   =================================== */
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 32px;
+  border: none;
+  border-radius: 16px;
+  font-family: inherit;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  overflow: hidden;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  color: white;
+  box-shadow: var(--shadow-glow);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 40px rgba(99, 102, 241, 0.5);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-shine {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% { left: -100%; }
+  50%, 100% { left: 100%; }
+}
+
+.btn-secondary {
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--primary-light);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.btn-ghost:hover {
+  color: var(--text-primary);
+}
+
+/* ===================================
+   スタート画面
+   =================================== */
+
+.logo-container {
+  margin-bottom: 40px;
+}
+
+.logo-icon {
+  font-size: 5rem;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  line-height: 1.2;
+  margin: 20px 0 10px;
+  background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+.stats-preview {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 30px;
+  backdrop-filter: blur(10px);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--accent);
+}
+
+/* フローティングシェイプ */
+.floating-shapes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.shape {
+  position: absolute;
+  font-size: 2rem;
+  opacity: 0.1;
+  animation: float 10s infinite;
+}
+
+.shape-1 { top: 10%; left: 10%; animation-delay: 0s; }
+.shape-2 { top: 20%; right: 15%; animation-delay: 2s; }
+.shape-3 { bottom: 30%; left: 5%; animation-delay: 4s; }
+.shape-4 { bottom: 15%; right: 10%; animation-delay: 6s; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(10deg); }
+}
+
+/* ===================================
+   クイズ画面
+   =================================== */
+
+.quiz-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  z-index: 100;
+}
+
+.streak-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.streak-label {
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+.streak-count {
+  font-size: 2.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--success) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.timer-bar {
+  width: 100%;
+  max-width: 400px;
+  height: 6px;
+  background: var(--card-bg);
+  border-radius: 3px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.timer-progress {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--success), var(--warning), var(--error));
+  border-radius: 3px;
+  transition: width 100ms linear;
+}
+
+.quiz-container {
+  width: 100%;
+  max-width: 600px;
+  padding: 0 20px;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--card-border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.quiz-content {
+  animation: fadeIn var(--transition-normal);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.question-category {
+  display: inline-block;
+  padding: 6px 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+
+.question-text {
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.option-btn {
+  position: relative;
+  width: 100%;
+  padding: 18px 24px;
+  background: var(--card-bg);
+  border: 2px solid var(--card-border);
+  border-radius: 16px;
+  font-family: inherit;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(10px);
+}
+
+.option-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  background: rgba(99, 102, 241, 0.1);
+  transform: translateX(5px);
+}
+
+.option-btn:disabled {
+  cursor: not-allowed;
+}
+
+.option-btn.correct {
+  border-color: var(--success);
+  background: rgba(16, 185, 129, 0.2);
+  animation: correctPulse 0.5s;
+}
+
+.option-btn.incorrect {
+  border-color: var(--error);
+  background: rgba(239, 68, 68, 0.2);
+  animation: shake 0.5s;
+}
+
+@keyframes correctPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+.option-label {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  text-align: center;
+  background: var(--primary);
+  border-radius: 8px;
+  margin-right: 12px;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+/* 結果フィードバック */
+.result-feedback {
+  text-align: center;
+  animation: fadeIn var(--transition-normal);
+}
+
+.feedback-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+}
+
+.result-feedback.correct .feedback-icon::before {
+  content: '🎉';
+}
+
+.result-feedback.incorrect .feedback-icon::before {
+  content: '😢';
+}
+
+.feedback-text {
+  font-size: 1.8rem;
+  font-weight: 900;
+  margin-bottom: 20px;
+}
+
+.result-feedback.correct .feedback-text {
+  color: var(--success);
+}
+
+.result-feedback.incorrect .feedback-text {
+  color: var(--error);
+}
+
+.explanation {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  padding: 20px;
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: 1px solid var(--card-border);
+}
+
+/* ===================================
+   ゲームオーバー画面
+   =================================== */
+
+.gameover-container {
+  animation: fadeIn var(--transition-slow);
+}
+
+.gameover-header {
+  margin-bottom: 40px;
+}
+
+.gameover-header h2 {
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+.final-score-label {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.final-score {
+  font-size: 6rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+
+.final-score-suffix {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+}
+
+.name-input-section {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 30px;
+  backdrop-filter: blur(10px);
+}
+
+.name-input-section label {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 15px;
+}
+
+#player-name {
+  width: 100%;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid var(--card-border);
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  text-align: center;
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+#player-name:focus {
+  border-color: var(--primary);
+}
+
+#player-name::placeholder {
+  color: var(--text-muted);
+}
+
+.gameover-actions {
+  margin-top: 20px;
+}
+
+/* ===================================
+   ランキング画面
+   =================================== */
+
+.ranking-container {
+  animation: fadeIn var(--transition-normal);
+}
+
+.ranking-title {
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+}
+
+.ranking-list {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 30px;
+  backdrop-filter: blur(10px);
+}
+
+.ranking-item {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.ranking-item:last-child {
+  border-bottom: none;
+}
+
+.ranking-item.top-3 {
+  background: linear-gradient(90deg, rgba(99, 102, 241, 0.1) 0%, transparent 100%);
+}
+
+.rank {
+  width: 40px;
+  font-size: 1.3rem;
+  font-weight: 900;
+}
+
+.rank.gold { color: #ffd700; }
+.rank.silver { color: #c0c0c0; }
+.rank.bronze { color: #cd7f32; }
+
+.player-info {
+  flex: 1;
+  text-align: left;
+  margin-left: 15px;
+}
+
+.player-name {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.player-date {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.player-score {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--accent);
+}
+
+.no-ranking {
+  padding: 40px 20px;
+  color: var(--text-muted);
+}
+
+/* ===================================
+   レスポンシブ対応
+   =================================== */
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 2rem;
+  }
+  
+  .question-text {
+    font-size: 1.2rem;
+  }
+  
+  .option-btn {
+    padding: 14px 18px;
+    font-size: 1rem;
+  }
+  
+  .final-score {
+    font-size: 4.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 3rem;
+  }
+  
+  .btn {
+    width: auto;
+    min-width: 250px;
+  }
+}

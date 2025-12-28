@@ -86,7 +86,7 @@ export async function generateQuiz() {
       throw new Error('Invalid quiz format');
     }
 
-    return quiz;
+    return shuffleQuiz(quiz);
   } catch (error) {
     console.error('Quiz generation error:', error);
 
@@ -96,9 +96,25 @@ export async function generateQuiz() {
       { category: '理科', question: '水の化学式は？', options: ['CO2', 'H2O', 'NaCl', 'O2'], correctIndex: 1, explanation: '水はH2O（水素2つと酸素1つ）で構成されています。' },
       { category: '社会（歴史）', question: '鎌倉幕府を開いた人物は？', options: ['源頼朝', '平清盛', '足利尊氏', '徳川家康'], correctIndex: 0, explanation: '源頼朝は1185年に鎌倉幕府を開きました。' },
       { category: '国語', question: '「急がば回れ」の意味は？', options: ['急いで走れ', '遠回りでも確実な道を選べ', '回り道をするな', '急いで回転しろ'], correctIndex: 1, explanation: '急いでいる時こそ、安全で確実な方法を取るべきという意味です。' },
-      { category: '英語', question: '「Thank you」の意味は？', options: ['さようなら', 'こんにちは', 'ありがとう', 'おはよう'], correctIndex: 2, explanation: 'Thank youは感謝を表す英語表現です。' }
+      { category: '英語', question: '「Thank you」の意味は？', options: ['さようにら', 'こんにちは', 'ありがとう', 'おはよう'], correctIndex: 2, explanation: 'Thank youは感謝を表す英語表現です。' }
     ];
 
-    return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+    return shuffleQuiz(fallbacks[Math.floor(Math.random() * fallbacks.length)]);
   }
+}
+
+/**
+ * クイズの選択肢をシャッフルし、correctIndexを更新する
+ */
+function shuffleQuiz(quiz) {
+  const originalOptions = [...quiz.options];
+  const correctAnswer = originalOptions[quiz.correctIndex];
+
+  for (let i = quiz.options.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [quiz.options[i], quiz.options[j]] = [quiz.options[j], quiz.options[i]];
+  }
+
+  quiz.correctIndex = quiz.options.indexOf(correctAnswer);
+  return quiz;
 }

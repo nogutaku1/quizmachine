@@ -3,12 +3,13 @@
 // ===================================
 
 import './style.css';
-import { generateQuiz, resetAskedQuestions, getAskedQuestionsCount } from './api.js';
-import { saveScore, getRankings, getTopScore } from './supabase.js';
+import { generateQuiz, resetAskedQuestions } from './api.js';
 
 // ===================================
 // 状態管理
 // ===================================
+
+const LOCAL_STORAGE_KEY = 'quizmachine_best_score';
 
 const state = {
   currentScreen: 'start',
@@ -16,7 +17,7 @@ const state = {
   currentQuiz: null,
   isAnswered: false,
   timerInterval: null,
-  timeLeft: 15 // 15秒のタイマー
+  timeLeft: 30 // 30秒のタイマー
 };
 
 // ===================================
@@ -26,15 +27,13 @@ const state = {
 const screens = {
   start: document.getElementById('start-screen'),
   quiz: document.getElementById('quiz-screen'),
-  gameover: document.getElementById('gameover-screen'),
-  ranking: document.getElementById('ranking-screen')
+  gameover: document.getElementById('gameover-screen')
 };
 
 const elements = {
   // スタート画面
   topScore: document.getElementById('top-score'),
   startBtn: document.getElementById('start-btn'),
-  rankingBtn: document.getElementById('ranking-btn'),
 
   // クイズ画面
   streakCount: document.getElementById('streak-count'),
@@ -49,16 +48,36 @@ const elements = {
 
   // ゲームオーバー画面
   finalScore: document.getElementById('final-score'),
-  playerName: document.getElementById('player-name'),
-  submitScoreBtn: document.getElementById('submit-score-btn'),
+  shareXBtn: document.getElementById('share-x-btn'),
   retryBtn: document.getElementById('retry-btn'),
-  homeBtn: document.getElementById('home-btn'),
-
-  // ランキング画面
-  rankingLoading: document.getElementById('ranking-loading'),
-  rankingList: document.getElementById('ranking-list'),
-  backHomeBtn: document.getElementById('back-home-btn')
+  homeBtn: document.getElementById('home-btn')
 };
+
+// ===================================
+// ローカルストレージ（個人ベストスコア）
+// ===================================
+
+function getBestScore() {
+  try {
+    const score = localStorage.getItem(LOCAL_STORAGE_KEY);
+    return score ? parseInt(score, 10) : 0;
+  } catch {
+    return 0;
+  }
+}
+
+function saveBestScore(score) {
+  try {
+    const currentBest = getBestScore();
+    if (score > currentBest) {
+      localStorage.setItem(LOCAL_STORAGE_KEY, score.toString());
+      return true; // 新記録
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
 
 // ===================================
 // 画面遷移
@@ -66,9 +85,11 @@ const elements = {
 
 function showScreen(screenName) {
   Object.values(screens).forEach(screen => {
-    screen.classList.remove('active');
+    if (screen) screen.classList.remove('active');
   });
-  screens[screenName].classList.add('active');
+  if (screens[screenName]) {
+    screens[screenName].classList.add('active');
+  }
   state.currentScreen = screenName;
 }
 
@@ -77,12 +98,12 @@ function showScreen(screenName) {
 // ===================================
 
 function startTimer() {
-  state.timeLeft = 15;
+  state.timeLeft = 30;
   elements.timerProgress.style.width = '100%';
 
   state.timerInterval = setInterval(() => {
     state.timeLeft -= 0.1;
-    const percentage = (state.timeLeft / 15) * 100;
+    const percentage = (state.timeLeft / 30) * 100;
     elements.timerProgress.style.width = `${Math.max(0, percentage)}%`;
 
     if (state.timeLeft <= 0) {
@@ -229,111 +250,49 @@ function showFeedback(isCorrect) {
 function endGame() {
   stopTimer();
   elements.finalScore.textContent = state.streak;
-  elements.playerName.value = '';
+
+  // ベストスコアを更新
+  const isNewRecord = saveBestScore(state.streak);
+
   showScreen('gameover');
-}
 
-// ===================================
-// スコア登録
-// ===================================
-
-async function submitScore() {
-  const playerName = elements.playerName.value.trim();
-
-  if (!playerName) {
-    elements.playerName.focus();
-    elements.playerName.style.borderColor = 'var(--error)';
-    setTimeout(() => {
-      elements.playerName.style.borderColor = '';
-    }, 1000);
-    return;
-  }
-
-  elements.submitScoreBtn.disabled = true;
-  elements.submitScoreBtn.textContent = '登録中...';
-
-  const success = await saveScore(playerName, state.streak);
-
-  if (success) {
-    elements.submitScoreBtn.textContent = '登録完了！';
-    setTimeout(() => {
-      showRanking();
-    }, 500);
-  } else {
-    elements.submitScoreBtn.textContent = '再試行';
-    elements.submitScoreBtn.disabled = false;
+  // 新記録の場合は表示を更新
+  if (isNewRecord) {
+    elements.topScore.textContent = state.streak;
   }
 }
 
 // ===================================
-// ランキング表示
+// Xでシェア
 // ===================================
 
-async function showRanking() {
-  showScreen('ranking');
-  elements.rankingLoading.classList.remove('hidden');
-  elements.rankingList.classList.add('hidden');
+function shareOnX() {
+  const score = state.streak;
+  const text = `🎉 エターナル一般常識クイズで${score}問連続正解しました！\n\nOpenAIが作問する一般常識クイズに挑戦してみませんか？\n\n#エターナル一般常識クイズ`;
+  const url = window.location.href;
 
-  const rankings = await getRankings();
-
-  elements.rankingLoading.classList.add('hidden');
-  elements.rankingList.classList.remove('hidden');
-
-  if (rankings.length === 0) {
-    elements.rankingList.innerHTML = '<p class="no-ranking">まだランキングがありません</p>';
-    return;
-  }
-
-  elements.rankingList.innerHTML = rankings.map((entry, index) => {
-    const rankClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
-    const topClass = index < 3 ? 'top-3' : '';
-    const date = new Date(entry.created_at).toLocaleDateString('ja-JP');
-
-    return `
-      <div class="ranking-item ${topClass}">
-        <span class="rank ${rankClass}">${index + 1}</span>
-        <div class="player-info">
-          <div class="player-name">${escapeHtml(entry.player_name)}</div>
-          <div class="player-date">${date}</div>
-        </div>
-        <span class="player-score">${entry.score}</span>
-      </div>
-    `;
-  }).join('');
-}
-
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
+  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+  window.open(twitterUrl, '_blank', 'width=550,height=420');
 }
 
 // ===================================
 // 初期化
 // ===================================
 
-async function init() {
-  // 最高スコアを取得
-  const topScore = await getTopScore();
-  elements.topScore.textContent = topScore > 0 ? topScore : '--';
+function init() {
+  // ローカルストレージからベストスコアを取得
+  const bestScore = getBestScore();
+  elements.topScore.textContent = bestScore > 0 ? bestScore : '--';
 
   // イベントリスナー設定
   elements.startBtn.addEventListener('click', startGame);
-  elements.rankingBtn.addEventListener('click', showRanking);
-  elements.submitScoreBtn.addEventListener('click', submitScore);
+  elements.shareXBtn.addEventListener('click', shareOnX);
   elements.retryBtn.addEventListener('click', startGame);
-  elements.homeBtn.addEventListener('click', () => showScreen('start'));
-  elements.backHomeBtn.addEventListener('click', async () => {
-    const topScore = await getTopScore();
-    elements.topScore.textContent = topScore > 0 ? topScore : '--';
+  elements.homeBtn.addEventListener('click', () => {
+    // ホームに戻る際にベストスコアを再表示
+    const bestScore = getBestScore();
+    elements.topScore.textContent = bestScore > 0 ? bestScore : '--';
     showScreen('start');
-  });
-
-  // Enterキーでスコア登録
-  elements.playerName.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      submitScore();
-    }
   });
 }
 

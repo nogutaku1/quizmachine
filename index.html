@@ -1,28 +1,30 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="中学3年生までに習う一般常識の4択クイズ。何問連続正解できるかチャレンジしよう！" />
+  <meta name="description" content="OpenAIが作問する、たまにテキトーな一般常識クイズ。何問連続正解できるかチャレンジしよう！" />
   <title>エターナル一般常識クイズ</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/src/style.css" />
 </head>
+
 <body>
   <div id="app">
     <!-- スタート画面 -->
     <div id="start-screen" class="screen active">
       <div class="container">
         <div class="logo-container">
-          <div class="logo-icon">∞</div>
+          <div class="logo-icon">🤖</div>
           <h1 class="title">エターナル<br>一般常識クイズ</h1>
-          <p class="subtitle">中学3年生までの知識で挑戦！</p>
+          <p class="subtitle">OpenAIが作問する<br>たまにテキトーな<br>一般常識クイズ</p>
         </div>
         <div class="stats-preview">
           <div class="stat-item">
-            <span class="stat-label">現在の最高記録</span>
+            <span class="stat-label">あなたの最高記録</span>
             <span id="top-score" class="stat-value">--</span>
           </div>
         </div>
@@ -30,7 +32,6 @@
           <span>クイズスタート</span>
           <div class="btn-shine"></div>
         </button>
-        <button id="ranking-btn" class="btn btn-secondary">ランキングを見る</button>
       </div>
       <div class="floating-shapes">
         <div class="shape shape-1">?</div>
@@ -80,34 +81,26 @@
           <div class="final-score" id="final-score">0</div>
           <p class="final-score-suffix">問連続正解！</p>
         </div>
-        <div class="name-input-section">
-          <label for="player-name">ニックネームを入力してランキングに登録</label>
-          <input type="text" id="player-name" placeholder="ニックネーム（10文字まで）" maxlength="10" />
-          <button id="submit-score-btn" class="btn btn-primary">登録する</button>
+        <div class="share-section">
+          <p class="share-label">結果をシェアしよう！</p>
+          <button id="share-x-btn" class="btn btn-x">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path
+                d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+            </svg>
+            <span>Xでシェア</span>
+          </button>
         </div>
         <div class="gameover-actions">
-          <button id="retry-btn" class="btn btn-secondary">もう一度挑戦</button>
+          <button id="retry-btn" class="btn btn-primary">もう一度挑戦</button>
           <button id="home-btn" class="btn btn-ghost">ホームに戻る</button>
         </div>
-      </div>
-    </div>
-
-    <!-- ランキング画面 -->
-    <div id="ranking-screen" class="screen">
-      <div class="container ranking-container">
-        <h2 class="ranking-title">🏆 ランキング TOP10</h2>
-        <div id="ranking-loading" class="loading">
-          <div class="spinner"></div>
-          <p>ランキングを取得中...</p>
-        </div>
-        <div id="ranking-list" class="ranking-list hidden">
-          <!-- Ranking items will be inserted here -->
-        </div>
-        <button id="back-home-btn" class="btn btn-secondary">ホームに戻る</button>
+        <p class="disclaimer">※ AIが作問するため、まれに不正確な問題が含まれる場合があります</p>
       </div>
     </div>
   </div>
 
   <script type="module" src="/src/main.js"></script>
 </body>
+
 </html>
